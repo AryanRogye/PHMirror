@@ -21,8 +21,8 @@ Phmirror is a SwiftUI app for local macOS <-> iOS screen/control workflows over 
 5. Grant Local Network/Bluetooth permissions when prompted.
 
 ## Examples
-this is me asking Codex 5.3 to build a random app that generates a random color on every tap, all built while taking a shit
-but this can be used for a whole other range of things
+this is me asking Codex 5.3 to build a random app that generates a random color on every tap, all built while taking a shit, but this can be used for a whole other range of things
+
 <img width="225" height="430" src="https://github.com/user-attachments/assets/47051478-6f54-4dbf-b057-0a884adb1865" />
 <img width="225" height="430" src="https://github.com/user-attachments/assets/51d9a87d-66e6-48d9-be84-3f1c9ee42c72" />
 <img width="225" height="430" src="https://github.com/user-attachments/assets/d20681c3-72fc-4899-a015-e7014433123e" />
