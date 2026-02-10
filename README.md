@@ -20,14 +20,19 @@ Phmirror is a SwiftUI app for local macOS <-> iOS screen/control workflows over 
 4. Select an iOS device/simulator and run to start the client app.
 5. Grant Local Network/Bluetooth permissions when prompted.
 
-## Open Source Notes
+## Examples
+this is me asking Codex 5.3 to build a random app that generates a random color on every tap, all built while taking a shit
+but this can be used for a whole other range of things
+<img width="225" height="430" src="https://github.com/user-attachments/assets/47051478-6f54-4dbf-b057-0a884adb1865" />
+<img width="225" height="430" src="https://github.com/user-attachments/assets/51d9a87d-66e6-48d9-be84-3f1c9ee42c72" />
+<img width="225" height="430" src="https://github.com/user-attachments/assets/d20681c3-72fc-4899-a015-e7014433123e" />
+<img width="225" height="430" src="https://github.com/user-attachments/assets/5ba708fa-bb62-4bff-ab17-b5937805071e" />
+<img width="225" height="430" src="https://github.com/user-attachments/assets/8525a0a3-881e-4d4d-be5a-2dce907592ab" />
 
-Before publishing or accepting external contributors:
-
-1. Keep release binaries out of source control (`updates/Phmirror.app`, `updates/Phmirror-Installer.dmg` are ignored by `.gitignore`).
-2. Keep Xcode user-specific files out of source control (`xcuserdata`, `*.xcuserstate` are ignored by `.gitignore`).
-3. Consider switching to a neutral bundle ID for public forks if needed.
+## Why I Built this
+[SnapCore](https://github.com/AryanRogye/SnapCore) is the main core that the app is built on top of, this was built by me a few months ago
+Wanted to test out Codex 5.3 while playing video games, a friend told me a sick idea for a app where he could control his mac from his bed,
+so with 1 prompt + a few polishes added by me, I was able to spit out a fully functional app
 
 ## License
-
 This project is licensed under the MIT License. See `LICENSE`.
