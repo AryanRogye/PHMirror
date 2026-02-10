@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+
+# Xcode user-specific data
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+
+# Xcode build products
+DerivedData/
+build/
+*.dSYM
+*.dSYM.zip
+*.ipa
+*.xcarchive
+
+# Swift Package Manager
+.build/
+
+# Local release artifacts (do not commit binaries)
+updates/Phmirror.app/
+updates/Phmirror-Installer.dmg
+updates/BUILD-TEMP/
+
+# Temporary files
+*.tmp
