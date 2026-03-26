@@ -28,6 +28,7 @@ struct PhmirrorApp: App {
 }
 
 
+#if os(macOS)
 struct PermissionView: View {
     
     @Bindable var permission: PermissionService
@@ -61,3 +62,4 @@ struct PermissionView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+#endif

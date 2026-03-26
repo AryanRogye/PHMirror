@@ -8,12 +8,13 @@ enum PointerInputInjector {
     static func inject(_ event: PointerEvent) {
         guard let targetScreen = NSScreen.main else { return }
 
-        let frame = targetScreen.frame
+        let frame = targetScreen.visibleFrame
         let clampedX = min(max(event.x, 0), 1)
         let clampedY = min(max(event.y, 0), 1)
 
         // SnapCore frames are currently arriving rotated 180 degrees relative to
         // the iOS touch surface, so we mirror both axes before posting events.
+        // Use the visible frame so the remote pointer does not trigger the menu bar area.
         let x = frame.maxX - (clampedX * frame.width)
         let y = frame.minY + (clampedY * frame.height)
         let point = CGPoint(x: x, y: y)

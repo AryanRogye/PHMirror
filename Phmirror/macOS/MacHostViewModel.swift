@@ -93,12 +93,6 @@ final class MacHostViewModel: ObservableObject {
         }
 
         guard recorder.hasScreenRecordPermission() else {
-            recorder.startRecording(
-                scale: .medium,
-                showsCursor: true,
-                capturesAudio: false,
-                fps: .fps120
-            )
             connectionStatus = "Grant Screen Recording permission in System Settings, then relaunch."
             hostPhase = .error
             return

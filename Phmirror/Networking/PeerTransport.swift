@@ -13,6 +13,7 @@ final class PeerTransport: NSObject {
         case client
     }
 
+    private static let streamName = "phmirror-wire"
     private let role: Role
     private let serviceType = "phmirrorctrl"
     private let session: MCSession
@@ -23,6 +24,8 @@ final class PeerTransport: NSObject {
     private let inviteCooldown: Duration = .seconds(8)
     private let clock = ContinuousClock()
     private var browserRetryScheduled = false
+    private var outputStreams: [MCPeerID: OutputStream] = [:]
+    private var inputStreams: [MCPeerID: InputStream] = [:]
 
     var onStatusChanged: ((String) -> Void)?
     var onPeersChanged: (([String]) -> Void)?
@@ -31,6 +34,10 @@ final class PeerTransport: NSObject {
     var onPointerEvent: ((PointerEvent) -> Void)?
     var onScrollEvent: ((ScrollEvent) -> Void)?
     var onKeyboardEvent: ((KeyboardEvent) -> Void)?
+    var onOutputStreamChanged: ((OutputStream?) -> Void)?
+    var onInputStreamChanged: ((InputStream?) -> Void)?
+    var currentOutputStream: OutputStream? { outputStreams.values.first }
+    var currentInputStream: InputStream? { inputStreams.values.first }
 
     init(role: Role) {
         self.role = role
@@ -71,6 +78,7 @@ final class PeerTransport: NSObject {
         invitedPeers.removeAll()
         lastInviteAt.removeAll()
         browserRetryScheduled = false
+        closeAllStreams()
         session.disconnect()
         publishStatus("Disconnected")
         publishPeers([String]())
@@ -103,13 +111,90 @@ final class PeerTransport: NSObject {
     private func send(payload: Data, as packetType: WirePacketType, mode: MCSessionSendDataMode) {
         guard !session.connectedPeers.isEmpty else { return }
 
-        var packet = Data([packetType.rawValue])
-        packet.append(payload)
+        let packet = makeSessionPacket(payload: payload, type: packetType)
 
         do {
             try session.send(packet, toPeers: session.connectedPeers, with: mode)
         } catch {
             publishStatus("Send error: \(error.localizedDescription)")
+        }
+    }
+
+    private func makeSessionPacket(payload: Data, type: WirePacketType) -> Data {
+        var packet = Data([type.rawValue])
+        packet.append(payload)
+        return packet
+    }
+
+    private func openOutputStreamIfNeeded(to peerID: MCPeerID) {
+        guard role == .host else { return }
+        guard outputStreams[peerID] == nil else { return }
+
+        do {
+            let stream = try session.startStream(withName: Self.streamName, toPeer: peerID)
+            stream.schedule(in: .main, forMode: .default)
+            stream.open()
+            outputStreams[peerID] = stream
+            publishCurrentOutputStream()
+        } catch {
+            publishStatus("Stream open error: \(error.localizedDescription)")
+        }
+    }
+
+    private func closeOutputStream(for peerID: MCPeerID) {
+        guard let stream = outputStreams.removeValue(forKey: peerID) else { return }
+        closeStream(stream)
+        publishCurrentOutputStream()
+    }
+
+    private func closeInputStream(for peerID: MCPeerID) {
+        guard let stream = inputStreams.removeValue(forKey: peerID) else { return }
+        closeStream(stream)
+        publishCurrentInputStream()
+    }
+
+    private func closeAllStreams() {
+        for stream in outputStreams.values {
+            closeStream(stream)
+        }
+        outputStreams.removeAll()
+
+        for stream in inputStreams.values {
+            closeStream(stream)
+        }
+        inputStreams.removeAll()
+
+        publishCurrentOutputStream()
+        publishCurrentInputStream()
+    }
+
+    private func closeStream(_ stream: Stream) {
+        unregisterOutputStream(stream)
+        unregisterInputStream(stream)
+        stream.delegate = nil
+        stream.remove(from: .main, forMode: .default)
+        stream.close()
+    }
+
+    private func unregisterOutputStream(_ stream: Stream) {
+        outputStreams = outputStreams.filter { $0.value !== stream }
+    }
+
+    private func unregisterInputStream(_ stream: Stream) {
+        inputStreams = inputStreams.filter { $0.value !== stream }
+    }
+
+    private func publishCurrentOutputStream() {
+        let stream = currentOutputStream
+        DispatchQueue.main.async { [weak self] in
+            self?.onOutputStreamChanged?(stream)
+        }
+    }
+
+    private func publishCurrentInputStream() {
+        let stream = currentInputStream
+        DispatchQueue.main.async { [weak self] in
+            self?.onInputStreamChanged?(stream)
         }
     }
 
@@ -200,11 +285,14 @@ extension PeerTransport: MCSessionDelegate {
         switch state {
         case .notConnected:
             invitedPeers.remove(peerID)
+            closeOutputStream(for: peerID)
+            closeInputStream(for: peerID)
             stateText = "Not connected"
         case .connecting:
             stateText = "Connecting to \(peerID.displayName)..."
         case .connected:
             invitedPeers.remove(peerID)
+            openOutputStreamIfNeeded(to: peerID)
             stateText = "Connected to \(peerID.displayName)"
         @unknown default:
             stateText = "Unknown connection state"
@@ -229,6 +317,9 @@ extension PeerTransport: MCSessionDelegate {
                  didReceive stream: InputStream,
                  withName streamName: String,
                  fromPeer peerID: MCPeerID) {
+        closeInputStream(for: peerID)
+        inputStreams[peerID] = stream
+        publishCurrentInputStream()
     }
 
     func session(_ session: MCSession,

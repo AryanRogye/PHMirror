@@ -5,6 +5,7 @@
 //  Created by Aryan Rogye on 3/26/26.
 //
 
+#if os(macOS)
 import ApplicationServices
 import AppKit
 
@@ -123,3 +124,4 @@ class PermissionFetcherService: PermissionProviding {
         return trusted
     }
 }
+#endif

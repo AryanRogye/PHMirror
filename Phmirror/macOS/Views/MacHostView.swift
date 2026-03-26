@@ -30,7 +30,6 @@ struct MacHostView: View {
             }
             .padding(28)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
             withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) {
                 pulse = true
@@ -41,35 +40,35 @@ struct MacHostView: View {
     // MARK: - Background Components
     
     private var backgroundView: some View {
-        ZStack {
-            // Subtle warm gradient
-            LinearGradient(
-                colors: [
-                    Color(red: 1.00, green: 0.99, blue: 0.97),
-                    Color(red: 1.00, green: 0.96, blue: 0.90),
-                    Color(red: 1.00, green: 0.94, blue: 0.86)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-            
-            // Animated background orbs
-            Circle()
-                .fill(brandOrange.opacity(0.12))
-                .frame(width: 320)
-                .blur(radius: 50)
-                .offset(x: -160, y: -120)
-                .scaleEffect(pulse ? 1.2 : 0.8)
+        GeometryReader { proxy in
+            ZStack {
+                // Subtle warm gradient
+                LinearGradient(
+                    colors: [
+                        Color(red: 1.00, green: 0.99, blue: 0.97),
+                        Color(red: 1.00, green: 0.96, blue: 0.90),
+                        Color(red: 1.00, green: 0.94, blue: 0.86)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
 
-            Circle()
-                .fill(brandOrangeSoft.opacity(0.15))
-                .frame(width: 280)
-                .blur(radius: 40)
-                .offset(x: 180, y: 160)
-                .scaleEffect(pulse ? 0.8 : 1.2)
+                Circle()
+                    .fill(brandOrange.opacity(0.12))
+                    .frame(width: 320, height: 320)
+                    .blur(radius: 50)
+                    .position(x: proxy.size.width * 0.18, y: proxy.size.height * 0.16)
+                
+                Circle()
+                    .fill(brandOrangeSoft.opacity(0.15))
+                    .frame(width: 280, height: 280)
+                    .blur(radius: 40)
+                    .position(x: proxy.size.width * 0.88, y: proxy.size.height * 0.78)
+            }
         }
         .background(.ultraThinMaterial)
+        .clipped()
     }
 
     // MARK: - Header
@@ -125,25 +124,17 @@ struct MacHostView: View {
     
     private var mainStatusView: some View {
         VStack(spacing: 16) {
-            ZStack {
+            ZStack(alignment: .center) {
                 // Outer ring
                 Circle()
                     .stroke(statusColor.opacity(0.15), lineWidth: 4)
                     .frame(width: 90, height: 90)
-                
-                // Pulsing glow
-                Circle()
-                    .fill(statusColor.opacity(0.1))
-                    .frame(width: 110, height: 110)
-                    .blur(radius: 12)
-                    .scaleEffect(pulse ? 1.15 : 0.9)
                 
                 // Orbiting dot
                 Circle()
                     .fill(statusColor)
                     .frame(width: 8, height: 8)
                     .offset(y: -45)
-                    .rotationEffect(.degrees(pulse ? 360 : 0))
                 
                 // Icon
                 Image(systemName: statusIcon)
@@ -151,7 +142,6 @@ struct MacHostView: View {
                     .foregroundStyle(statusColor)
                     .shadow(color: statusColor.opacity(0.2), radius: 4)
             }
-            .animation(.linear(duration: 5).repeatForever(autoreverses: false), value: pulse)
             
             VStack(spacing: 4) {
                 Text(statusTitle)
