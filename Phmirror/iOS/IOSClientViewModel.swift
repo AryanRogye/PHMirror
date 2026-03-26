@@ -7,6 +7,8 @@ import Foundation
 import UIKit
 import VideoToolbox
 import SnapCoreEngine
+import SnapCore
+import SwiftUI
 
 @MainActor
 final class IOSClientViewModel: ObservableObject {
@@ -24,11 +26,16 @@ final class IOSClientViewModel: ObservableObject {
     @Published var networkPhase: NetworkPhase = .idle
     @Published var connectedPeers: [String] = []
     @Published var latestFrame: UIImage?
-    @Published var frameInfo = FrameInfo(width: 16, height: 9)
+    @Published var frameInfo = ScreenInfo(width: 16, height: 9)
     @Published var isReceivingFrames = false
+    
+    @AppStorage("ControlEnabled") var controlEnabled = true
+    @AppStorage("InvertX") var invertX = false
+    @AppStorage("InvertY") var invertY = false
+    @Published var videoScale: VideoScale = .normal
 
     private let transport = PeerTransport(role: .client)
-    private let liveStreamDecoder = LiveFileWritingDecoder()
+    private let liveStreamDecoder : LiveFileWritingDecoder = LiveFileWritingDecoder()
 
     init() {
         transport.onStatusChanged = { [weak self] status in
@@ -60,23 +67,27 @@ final class IOSClientViewModel: ObservableObject {
         }
 
         transport.onFrameInfo = { [weak self] info in
-            self?.frameInfo = info
+            DispatchQueue.main.async {
+                self?.frameInfo = info
+            }
         }
 
         transport.onFrameData = { [weak self] frameData in
             guard let self, let image = UIImage(data: frameData) else { return }
-            self.latestFrame = image
-            self.isReceivingFrames = true
+            DispatchQueue.main.async {
+                self.latestFrame = image
+                self.isReceivingFrames = true
+            }
         }
 
-        liveStreamDecoder.onFrameImage = { [weak self] image, frameInfo in
+        liveStreamDecoder.onFrameImage = { [weak self] (image: CGImage, frameInfo: (width: CGFloat, height: CGFloat)) -> Void in
             guard let self else { return }
             self.latestFrame = UIImage(cgImage: image)
-            self.frameInfo = FrameInfo(width: Int(frameInfo.width), height: Int(frameInfo.height))
+            self.frameInfo = ScreenInfo(width: Int(frameInfo.width), height: Int(frameInfo.height))
             self.isReceivingFrames = true
         }
 
-        liveStreamDecoder.onStatus = { [weak self] status in
+        liveStreamDecoder.onStatus = { [weak self] (status: String) in
             guard let self else { return }
             if self.connectedPeers.isEmpty { return }
             self.connectionStatus = status
@@ -103,6 +114,39 @@ final class IOSClientViewModel: ObservableObject {
         isReceivingFrames = false
         transport.stop()
         transport.start()
+    }
+    
+    public func sendClick(atRawPoint rawPoint: CGPoint) {
+        guard controlEnabled else { return }
+        sendPointer(phase: .down, atRawPoint: rawPoint, primaryDown: true)
+        sendPointer(phase: .up, atRawPoint: rawPoint, primaryDown: false)
+    }
+    
+    public func sendPointer(
+        phase: PointerPhase,
+        atRawPoint rawPoint: CGPoint,
+        primaryDown: Bool
+    ) {
+        let point = applyAxisAdjustments(to: rawPoint)
+        sendPointer(
+            PointerEvent(
+                x: point.x,
+                y: point.y,
+                phase: phase,
+                isPrimaryButtonDown: primaryDown
+            )
+        )
+    }
+    
+    private func applyAxisAdjustments(to point: CGPoint) -> CGPoint {
+        CGPoint(
+            x: invertX ? 1 - point.x : point.x,
+            y: invertY ? 1 - point.y : point.y
+        )
+    }
+    
+    func sendVideoScale(_ event: VideoScale) {
+        transport.sendVideoScale(event)
     }
 
     func sendPointer(_ event: PointerEvent) {

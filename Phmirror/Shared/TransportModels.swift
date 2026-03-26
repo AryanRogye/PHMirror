@@ -6,6 +6,7 @@ enum WirePacketType: UInt8 {
     case frameInfo = 3
     case scroll = 4
     case keyboard = 5
+    case videoScale = 6
 }
 
 enum PointerPhase: String, Codable {
@@ -37,7 +38,7 @@ struct KeyboardEvent: Codable {
     let keyCode: UInt16?
 }
 
-struct FrameInfo: Codable {
+struct ScreenInfo: Codable {
     let width: Int
     let height: Int
 }

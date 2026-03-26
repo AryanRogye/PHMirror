@@ -33,6 +33,8 @@ final class MacHostViewModel: ObservableObject {
     private let transport = PeerTransport(role: .host)
     private let recorder = ScreenRecordService()
     private let framePipeline: FramePipeline
+    
+    @Published var videoScale: VideoScale = .normal
 
     init() {
         framePipeline = FramePipeline(transport: transport)
@@ -57,7 +59,15 @@ final class MacHostViewModel: ObservableObject {
         transport.onKeyboardEvent = { event in
             PointerInputInjector.injectKeyboard(event)
         }
+        
+        transport.onVideoScale = { [weak self] scale in
+            DispatchQueue.main.async {
+                self?.videoScale = scale
+                self?.restartSharing()
+            }
+        }
 
+        /// When we get a frame, we can update the UI to show the frame size
         framePipeline.onFrameSize = { [weak self] size in
             Task { @MainActor [weak self] in
                 self?.lastFrameSizeText = "\(Int(size.width)) x \(Int(size.height))"
@@ -65,6 +75,7 @@ final class MacHostViewModel: ObservableObject {
             }
         }
 
+        /// When we get a frame from the recorder, we process it
         recorder.onScreenFrame = { [framePipeline] sample in
             framePipeline.process(sample.buffer)
         }
@@ -103,7 +114,11 @@ final class MacHostViewModel: ObservableObject {
         isSharing = true
         sharingPhase = .waitingForPicker
 
-        recorder.startRecording(scale: .normal, showsCursor: true, capturesAudio: false)
+        recorder.startRecording(
+            scale: videoScale,
+            showsCursor: true,
+            capturesAudio: false
+        )
         connectionStatus = "Pick a display in the system content picker."
     }
 
@@ -132,42 +147,24 @@ final class MacHostViewModel: ObservableObject {
         }
         return .idle
     }
-}
-
-private final class FramePipeline {
-    private let transport: PeerTransport
-    private let frameEncoder = FrameEncoder()
-    private var lastFrameSendTime = ContinuousClock.now
-    private let frameInterval: Duration = .milliseconds(90)
-    private var sentFrameInfo = false
-
-    var onFrameSize: ((CGSize) -> Void)?
-
-    init(transport: PeerTransport) {
-        self.transport = transport
-    }
-
-    func reset() {
-        sentFrameInfo = false
-        lastFrameSendTime = ContinuousClock.now
-    }
-
-    func process(_ sample: CMSampleBuffer) {
-        let now = ContinuousClock.now
-        guard now - lastFrameSendTime >= frameInterval else { return }
-        lastFrameSendTime = now
-
-        guard let encoded = frameEncoder.encodeJPEG(sampleBuffer: sample) else { return }
-
-        transport.sendFrame(encoded.data)
-
-        if !sentFrameInfo {
-            let frameInfo = FrameInfo(width: Int(encoded.size.width), height: Int(encoded.size.height))
-            transport.sendFrameInfo(frameInfo)
-            sentFrameInfo = true
+    
+    func restartSharing() {
+        Task { @MainActor in
+            await recorder.stopRecording()
+            
+            framePipeline.reset()
+            lastError = nil
+            sharingPhase = .waitingForPicker
+            isSharing = true
+            
+            recorder.startRecording(
+                scale: videoScale,
+                showsCursor: true,
+                capturesAudio: false
+            )
+            
+            connectionStatus = "Pick a display in the system content picker."
         }
-
-        onFrameSize?(encoded.size)
     }
 }
 

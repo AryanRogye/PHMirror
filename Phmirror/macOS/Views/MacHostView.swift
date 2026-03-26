@@ -1,6 +1,7 @@
 #if os(macOS)
 
 import SwiftUI
+import SnapCore
 
 struct MacHostView: View {
     @ObservedObject var viewModel: MacHostViewModel
@@ -228,6 +229,7 @@ struct MacHostView: View {
             HStack(spacing: 12) {
                 detailCard(title: "Connection", value: hostPhaseText, icon: "network")
                 detailCard(title: "Sharing", value: sharingPhaseText, icon: "rectangle.badge.play")
+                detailCard(title: "VideoScale", value: videoScaleText, icon: "square.resize")
             }
         }
     }
@@ -343,6 +345,10 @@ struct MacHostView: View {
         case .waitingForPicker: return "Setup..."
         case .streaming: return "Streaming"
         }
+    }
+    
+    private var videoScaleText: String {
+        viewModel.videoScale.stringValue
     }
 
     private var connectedPeersText: String {
