@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		9B4F48262F75B49500EEBF28 /* SnapCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9B4F48252F75B49500EEBF28 /* SnapCore */; };
 		9B4F48282F75B49500EEBF28 /* SnapCoreEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 9B4F48272F75B49500EEBF28 /* SnapCoreEngine */; };
+		9B4F482E2F75C8F600EEBF28 /* SnapCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9B4F482D2F75C8F600EEBF28 /* SnapCore */; };
+		9B4F48302F75C8F600EEBF28 /* SnapCoreEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 9B4F482F2F75C8F600EEBF28 /* SnapCoreEngine */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,7 +31,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				9B4F48262F75B49500EEBF28 /* SnapCore in Frameworks */,
+				9B4F482E2F75C8F600EEBF28 /* SnapCore in Frameworks */,
 				9B4F48282F75B49500EEBF28 /* SnapCoreEngine in Frameworks */,
+				9B4F48302F75C8F600EEBF28 /* SnapCoreEngine in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,6 +78,8 @@
 			packageProductDependencies = (
 				9B4F48252F75B49500EEBF28 /* SnapCore */,
 				9B4F48272F75B49500EEBF28 /* SnapCoreEngine */,
+				9B4F482D2F75C8F600EEBF28 /* SnapCore */,
+				9B4F482F2F75C8F600EEBF28 /* SnapCoreEngine */,
 			);
 			productName = Phmirror;
 			productReference = 9BB799C82F381144002526E6 /* Phmirror.app */;
@@ -104,7 +110,7 @@
 			mainGroup = 9BB799BF2F381144002526E6;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				9B4F48242F75B49500EEBF28 /* XCLocalSwiftPackageReference "../SnapCore" */,
+				9B4F482C2F75C8F600EEBF28 /* XCRemoteSwiftPackageReference "SnapCore" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9BB799C92F381144002526E6 /* Products */;
@@ -376,12 +382,16 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		9B4F48242F75B49500EEBF28 /* XCLocalSwiftPackageReference "../SnapCore" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../SnapCore;
+/* Begin XCRemoteSwiftPackageReference section */
+		9B4F482C2F75C8F600EEBF28 /* XCRemoteSwiftPackageReference "SnapCore" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AryanRogye/SnapCore";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
 		};
-/* End XCLocalSwiftPackageReference section */
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		9B4F48252F75B49500EEBF28 /* SnapCore */ = {
@@ -390,6 +400,16 @@
 		};
 		9B4F48272F75B49500EEBF28 /* SnapCoreEngine */ = {
 			isa = XCSwiftPackageProductDependency;
+			productName = SnapCoreEngine;
+		};
+		9B4F482D2F75C8F600EEBF28 /* SnapCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B4F482C2F75C8F600EEBF28 /* XCRemoteSwiftPackageReference "SnapCore" */;
+			productName = SnapCore;
+		};
+		9B4F482F2F75C8F600EEBF28 /* SnapCoreEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B4F482C2F75C8F600EEBF28 /* XCRemoteSwiftPackageReference "SnapCore" */;
 			productName = SnapCoreEngine;
 		};
 /* End XCSwiftPackageProductDependency section */
