@@ -33,6 +33,7 @@ final class IOSClientViewModel: ObservableObject {
     @AppStorage("InvertX") var invertX = false
     @AppStorage("InvertY") var invertY = false
     @Published var videoScale: VideoScale = .normal
+    @Published var fps: FPS = .fps120
 
     private let transport = PeerTransport(role: .client)
     private let liveStreamDecoder : LiveFileWritingDecoder = LiveFileWritingDecoder()
@@ -147,6 +148,10 @@ final class IOSClientViewModel: ObservableObject {
     
     func sendVideoScale(_ event: VideoScale) {
         transport.sendVideoScale(event)
+    }
+    
+    func sendFPS(_ event: FPS) {
+        transport.sendFPS(event)
     }
 
     func sendPointer(_ event: PointerEvent) {

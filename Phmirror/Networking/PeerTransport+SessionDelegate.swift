@@ -73,24 +73,31 @@ extension PeerTransport: MCSessionDelegate {
             onFrameData?(Data(payload))
 
         case .frameInfo:
-            guard let frameInfo = try? JSONDecoder().decode(ScreenInfo.self, from: payload) else { return }
-            onFrameInfo?(frameInfo)
+            handle(ScreenInfo.self, payload, onReceive: onFrameInfo)
             
+        case .fps:
+            handle(FPS.self, payload, onReceive: onFPSInfo)
+
         case .videoScale:
-            guard let videoScale = try? JSONDecoder().decode(VideoScale.self, from: payload) else { return }
-            onVideoScale?(videoScale)
+            handle(VideoScale.self, payload, onReceive: onVideoScale)
 
         case .pointer:
-            guard let pointerEvent = try? JSONDecoder().decode(PointerEvent.self, from: payload) else { return }
-            onPointerEvent?(pointerEvent)
+            handle(PointerEvent.self, payload, onReceive: onPointerEvent)
 
         case .scroll:
-            guard let scrollEvent = try? JSONDecoder().decode(ScrollEvent.self, from: payload) else { return }
-            onScrollEvent?(scrollEvent)
+            handle(ScrollEvent.self, payload, onReceive: onScrollEvent)
 
         case .keyboard:
-            guard let keyboardEvent = try? JSONDecoder().decode(KeyboardEvent.self, from: payload) else { return }
-            onKeyboardEvent?(keyboardEvent)
+            handle(KeyboardEvent.self, payload, onReceive: onKeyboardEvent)
         }
+    }
+    
+    func handle<T: Decodable>(
+        _ type: T.Type,
+        _ data: Data,
+        onReceive: ((T) -> Void)?
+    ) {
+        guard let decoded: T = try? JSONDecoder().decode(type, from: data) else { return }
+        onReceive?(decoded)
     }
 }

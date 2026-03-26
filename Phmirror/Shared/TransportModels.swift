@@ -7,6 +7,7 @@ enum WirePacketType: UInt8 {
     case scroll = 4
     case keyboard = 5
     case videoScale = 6
+    case fps = 7
 }
 
 enum PointerPhase: String, Codable {

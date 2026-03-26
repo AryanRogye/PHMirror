@@ -546,20 +546,40 @@ struct PHMirrorControlCard: View {
                 .font(.caption)
                 .foregroundStyle(primaryText)
                 
-                HStack(spacing: 14) {
+                HStack(alignment: .center) {
+                    Text("Video Scale")
+                        .font(.caption)
+                        .foregroundStyle(primaryText)
+                    Spacer()
                     Picker("Video Scale", selection: $viewModel.videoScale) {
                         ForEach(VideoScale.allCases, id: \.self) { scale in
                             Text(scale.stringValue).tag(scale)
                         }
                     }
+                    .labelsHidden()
+                    .pickerStyle(.menu)
                     .onChange(of: viewModel.videoScale) {
                         viewModel.sendVideoScale(viewModel.videoScale)
                     }
+                    .tint(primaryText)
                 }
-                .minimumScaleFactor(0.5)
-                .lineLimit(1)
-                .font(.caption)
-                .foregroundStyle(primaryText)
+                HStack(alignment: .center) {
+                    Text("FPS")
+                        .font(.caption)
+                        .foregroundStyle(primaryText)
+                    Spacer()
+                    Picker("FPS", selection: $viewModel.fps) {
+                        ForEach(FPS.allCases, id: \.self) { fps in
+                            Text(fps.rawValue).tag(fps)
+                        }
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.menu)
+                    .onChange(of: viewModel.fps) {
+                        viewModel.sendFPS(viewModel.fps)
+                    }
+                    .tint(primaryText)
+                }
             }
         }
     }

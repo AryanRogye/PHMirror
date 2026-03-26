@@ -35,6 +35,7 @@ final class MacHostViewModel: ObservableObject {
     private let framePipeline: FramePipeline
     
     @Published var videoScale: VideoScale = .normal
+    @Published var fps: FPS = .fps120
 
     init() {
         framePipeline = FramePipeline(transport: transport)
@@ -63,6 +64,12 @@ final class MacHostViewModel: ObservableObject {
         transport.onVideoScale = { [weak self] scale in
             DispatchQueue.main.async {
                 self?.videoScale = scale
+                self?.restartSharing()
+            }
+        }
+        transport.onFPSInfo = { [weak self] fps in
+            DispatchQueue.main.async {
+                self?.fps = fps
                 self?.restartSharing()
             }
         }
@@ -117,7 +124,8 @@ final class MacHostViewModel: ObservableObject {
         recorder.startRecording(
             scale: videoScale,
             showsCursor: true,
-            capturesAudio: false
+            capturesAudio: false,
+            fps: fps
         )
         connectionStatus = "Pick a display in the system content picker."
     }
@@ -160,7 +168,8 @@ final class MacHostViewModel: ObservableObject {
             recorder.startRecording(
                 scale: videoScale,
                 showsCursor: true,
-                capturesAudio: false
+                capturesAudio: false,
+                fps: fps
             )
             
             connectionStatus = "Pick a display in the system content picker."

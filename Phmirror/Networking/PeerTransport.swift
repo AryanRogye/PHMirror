@@ -34,6 +34,7 @@ final class PeerTransport: NSObject {
     var onPeersChanged: (([String]) -> Void)?
     var onFrameData: ((Data) -> Void)?
     var onFrameInfo: ((ScreenInfo) -> Void)?
+    var onFPSInfo: ((FPS) -> Void)?
     var onVideoScale: ((VideoScale) -> Void)?
     var onPointerEvent: ((PointerEvent) -> Void)?
     var onScrollEvent: ((ScrollEvent) -> Void)?
