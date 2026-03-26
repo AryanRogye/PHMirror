@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A1A6B0012F40000100AAA001 /* SnapCore in Frameworks */ = {isa = PBXBuildFile; productRef = A1A6B0032F40000100AAA001 /* SnapCore */; };
+		9B4F48262F75B49500EEBF28 /* SnapCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9B4F48252F75B49500EEBF28 /* SnapCore */; };
+		9B4F48282F75B49500EEBF28 /* SnapCoreEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 9B4F48272F75B49500EEBF28 /* SnapCoreEngine */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1A6B0012F40000100AAA001 /* SnapCore in Frameworks */,
+				9B4F48262F75B49500EEBF28 /* SnapCore in Frameworks */,
+				9B4F48282F75B49500EEBF28 /* SnapCoreEngine in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,7 +72,8 @@
 			);
 			name = Phmirror;
 			packageProductDependencies = (
-				A1A6B0032F40000100AAA001 /* SnapCore */,
+				9B4F48252F75B49500EEBF28 /* SnapCore */,
+				9B4F48272F75B49500EEBF28 /* SnapCoreEngine */,
 			);
 			productName = Phmirror;
 			productReference = 9BB799C82F381144002526E6 /* Phmirror.app */;
@@ -100,9 +103,9 @@
 			);
 			mainGroup = 9BB799BF2F381144002526E6;
 			minimizedProjectReferenceProxies = 1;
-				packageReferences = (
-					A1A6B0022F40000100AAA001 /* XCRemoteSwiftPackageReference "SnapCore" */,
-				);
+			packageReferences = (
+				9B4F48242F75B49500EEBF28 /* XCLocalSwiftPackageReference "../SnapCore" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9BB799C92F381144002526E6 /* Products */;
 			projectDirPath = "";
@@ -373,22 +376,21 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		A1A6B0022F40000100AAA001 /* XCRemoteSwiftPackageReference "SnapCore" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/AryanRogye/SnapCore";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		9B4F48242F75B49500EEBF28 /* XCLocalSwiftPackageReference "../SnapCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../SnapCore;
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		A1A6B0032F40000100AAA001 /* SnapCore */ = {
+		9B4F48252F75B49500EEBF28 /* SnapCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A1A6B0022F40000100AAA001 /* XCRemoteSwiftPackageReference "SnapCore" */;
 			productName = SnapCore;
+		};
+		9B4F48272F75B49500EEBF28 /* SnapCoreEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SnapCoreEngine;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

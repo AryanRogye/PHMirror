@@ -66,7 +66,7 @@ final class MacHostViewModel: ObservableObject {
         }
 
         recorder.onScreenFrame = { [framePipeline] sample in
-            framePipeline.process(sample)
+            framePipeline.process(sample.buffer)
         }
     }
 
@@ -93,7 +93,12 @@ final class MacHostViewModel: ObservableObject {
         }
 
         guard recorder.hasScreenRecordPermission() else {
-            recorder.startRecording(scale: .normal, showsCursor: true, capturesAudio: false)
+            recorder.startRecording(
+                scale: .medium,
+                showsCursor: true,
+                capturesAudio: false,
+                fps: .fps120
+            )
             connectionStatus = "Grant Screen Recording permission in System Settings, then relaunch."
             hostPhase = .error
             return

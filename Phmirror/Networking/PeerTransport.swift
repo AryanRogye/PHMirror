@@ -46,7 +46,6 @@ final class PeerTransport: NSObject {
 
     func start() {
         stop()
-
         switch role {
         case .host:
             let discoveryInfo = ["role": "host"]
@@ -55,7 +54,6 @@ final class PeerTransport: NSObject {
             advertiser.startAdvertisingPeer()
             self.advertiser = advertiser
             publishStatus("Hosting as \(session.myPeerID.displayName). Waiting for iPhone...")
-
         case .client:
             let browser = MCNearbyServiceBrowser(peer: session.myPeerID, serviceType: serviceType)
             browser.delegate = self
